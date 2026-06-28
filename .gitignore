@@ -8,7 +8,6 @@ venv/
 .env
 local.properties
 
-# 生成物（site/ は Pages デプロイ時に Actions が生成するため追跡しない）
-site/reports/
-site/feed.xml
-site/index.html
+# site/ は蓄積（永続化）のためリポジトリで追跡する。
+# 過去レポートを保持し、保持ポリシー（期間+件数）で整理する設計のため
+# あえて .gitignore に含めない。

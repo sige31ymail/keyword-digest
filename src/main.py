@@ -55,6 +55,8 @@ def main() -> int:
         feed_link=cfg.site_base_url,
         feed_description="登録キーワードについて AI が生成した日次レポート",
         max_feed_items=cfg.max_feed_items,
+        retention_max_age_days=cfg.retention_max_age_days,
+        retention_max_count=cfg.retention_max_count,
     )
     result = use_case.execute()
     # 1 件でも成功すれば正常終了（全滅時のみエラー終了）

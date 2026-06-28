@@ -16,6 +16,8 @@ class Config:
     anthropic_api_key: str
     anthropic_model: str
     max_feed_items: int
+    retention_max_age_days: int
+    retention_max_count: int
 
     @property
     def owner(self) -> str:
@@ -52,4 +54,8 @@ def load() -> Config:
             "ANTHROPIC_MODEL", "claude-haiku-4-5"
         ).strip(),
         max_feed_items=int(os.environ.get("MAX_FEED_ITEMS", "20")),
+        retention_max_age_days=int(
+            os.environ.get("RETENTION_MAX_AGE_DAYS", "30")
+        ),
+        retention_max_count=int(os.environ.get("RETENTION_MAX_COUNT", "100")),
     )

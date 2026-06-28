@@ -13,7 +13,7 @@ concurrency:
   cancel-in-progress: false
 
 permissions:
-  contents: read
+  contents: write  # 生成レポートを site/ にコミットして蓄積するため
   issues: read
   pages: write
   id-token: write
@@ -45,7 +45,21 @@ jobs:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
           MAX_FEED_ITEMS: "20"
+          RETENTION_MAX_AGE_DAYS: "30"
+          RETENTION_MAX_COUNT: "100"
         run: python -m src.main
+
+      - name: Commit accumulated reports
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add site
+          if git diff --staged --quiet; then
+            echo "コミットする変更なし"
+          else
+            git commit -m "chore(reports): レポート蓄積を更新"
+            git push
+          fi
 
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3

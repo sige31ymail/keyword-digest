@@ -19,6 +19,11 @@ class SitePublisher(ABC):
         raise NotImplementedError
 
     @abstractmethod
+    def delete_reports(self, items: list[FeedItem]) -> int:
+        """指定したレポートの HTML を削除する。削除件数を返す。"""
+        raise NotImplementedError
+
+    @abstractmethod
     def write_feed(self, feed: Feed) -> None:
         """RSS フィード（feed.xml）と一覧（index.html）を書き出す。"""
         raise NotImplementedError

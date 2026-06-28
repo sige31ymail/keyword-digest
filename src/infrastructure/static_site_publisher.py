@@ -74,6 +74,7 @@ class StaticSitePublisher(SitePublisher):
             link=self._report_link(slug),
             guid=self._report_link(slug),
             published_at=published,
+            slug=slug,
         )
 
     _META_RE = {
@@ -111,9 +112,28 @@ class StaticSitePublisher(SitePublisher):
                 )
             link = self._report_link(slug)
             items.append(
-                FeedItem(title=title, link=link, guid=link, published_at=published)
+                FeedItem(
+                    title=title,
+                    link=link,
+                    guid=link,
+                    published_at=published,
+                    slug=slug,
+                )
             )
         return items
+
+    def delete_reports(self, items: list[FeedItem]) -> int:
+        deleted = 0
+        for item in items:
+            if not item.slug:
+                continue
+            path = os.path.join(self._reports_dir, f"{item.slug}.html")
+            try:
+                os.remove(path)
+                deleted += 1
+            except FileNotFoundError:
+                pass
+        return deleted
 
     def write_feed(self, feed: Feed) -> None:
         # RSS 2.0

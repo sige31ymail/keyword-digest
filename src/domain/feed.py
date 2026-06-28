@@ -11,6 +11,7 @@ class FeedItem:
     link: str
     guid: str
     published_at: datetime
+    slug: str = ""  # レポートファイルの識別子（保持ポリシーでの削除に使用）
 
 
 @dataclass(frozen=True)
