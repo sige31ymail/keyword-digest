@@ -97,7 +97,10 @@ class OpenAiReportGenerator(ReportGenerator):
                 paragraphs
             )
             sources = _merge_sources(ann_sources, inline_sources)
-            if sources:
+            already_has_sources = any(
+                p.startswith(("出典", "参考", "参照")) for p in paragraphs
+            )
+            if sources and not already_has_sources:
                 cited = " / ".join(f"{t}（{u}）" for t, u in sources[:6])
                 paragraphs = paragraphs + [f"出典: {cited}"]
             return Report(
