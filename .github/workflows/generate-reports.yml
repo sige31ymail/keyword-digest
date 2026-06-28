@@ -1,5 +1,6 @@
 name: Generate Reports
 
+# キーワード(Issue)を取得し AI レポートを生成して Pages へ公開するワークフロー
 on:
   workflow_dispatch: {}
   # Phase 4 で有効化: 毎日 JST 07:00 (UTC 22:00) に自動生成
