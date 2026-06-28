@@ -10,31 +10,10 @@ from ..domain.keyword import Keyword
 from ..domain.report import Report
 from ..ports.report_generator import GenerationError, ReportGenerator
 from . import _ai_prompt, _http
+from .openai_web_search import extract_text_and_sources as _extract_text_and_sources
 
 _CHAT_ENDPOINT = "https://api.openai.com/v1/chat/completions"
 _RESPONSES_ENDPOINT = "https://api.openai.com/v1/responses"
-
-
-def _extract_text_and_sources(data: dict) -> tuple[str, list[tuple[str, str]]]:
-    """Responses API 応答から最終テキストと出典(title,url)一覧を取り出す。"""
-    text = data.get("output_text") or ""
-    sources: list[tuple[str, str]] = []
-    seen: set[str] = set()
-    for item in data.get("output", []) or []:
-        if item.get("type") != "message":
-            continue
-        for content in item.get("content", []) or []:
-            if content.get("type") != "output_text":
-                continue
-            if not text:
-                text = content.get("text", "")
-            for ann in content.get("annotations", []) or []:
-                if ann.get("type") == "url_citation":
-                    url = ann.get("url")
-                    if url and url not in seen:
-                        seen.add(url)
-                        sources.append((ann.get("title") or url, url))
-    return text, sources
 
 
 def _merge_sources(

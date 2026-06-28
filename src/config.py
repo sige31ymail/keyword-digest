@@ -11,6 +11,12 @@ class Config:
     github_token: str
     site_base_url: str  # 例: https://owner.github.io/keyword-digest
     site_dir: str
+    deepseek_api_key: str
+    deepseek_model: str
+    deepseek_base_url: str
+    max_search_queries: int
+    tavily_api_key: str
+    tavily_max_results: int
     openai_api_key: str
     openai_model: str
     openai_web_search: bool
@@ -49,6 +55,14 @@ def load() -> Config:
         github_token=_required("GITHUB_TOKEN"),
         site_base_url=os.environ.get("SITE_BASE_URL", default_base).rstrip("/"),
         site_dir=os.environ.get("SITE_DIR", os.path.join(repo_root, "site")),
+        deepseek_api_key=os.environ.get("DEEPSEEK_API_KEY", "").strip(),
+        deepseek_model=os.environ.get("DEEPSEEK_MODEL", "deepseek-v4-pro").strip(),
+        deepseek_base_url=os.environ.get(
+            "DEEPSEEK_BASE_URL", "https://api.deepseek.com"
+        ).strip(),
+        max_search_queries=int(os.environ.get("MAX_SEARCH_QUERIES", "3")),
+        tavily_api_key=os.environ.get("TAVILY_API_KEY", "").strip(),
+        tavily_max_results=int(os.environ.get("TAVILY_MAX_RESULTS", "5")),
         openai_api_key=os.environ.get("OPENAI_API_KEY", "").strip(),
         openai_model=os.environ.get("OPENAI_MODEL", "gpt-4o-mini").strip(),
         openai_web_search=os.environ.get("OPENAI_WEB_SEARCH", "true").strip().lower()

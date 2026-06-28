@@ -12,24 +12,57 @@ import sys
 from . import config
 from .application.generate_daily_reports import GenerateDailyReportsUseCase
 from .infrastructure.anthropic_generator import AnthropicReportGenerator
+from .infrastructure.deepseek_generator import DeepSeekPipelineReportGenerator
 from .infrastructure.fallback_generator import FallbackReportGenerator
 from .infrastructure.github_issue_source import GitHubIssueKeywordSource
 from .infrastructure.openai_generator import OpenAiReportGenerator
+from .infrastructure.openai_web_search import OpenAiWebSearch
 from .infrastructure.static_site_publisher import StaticSitePublisher
+from .infrastructure.tavily_web_search import TavilyWebSearch
+
+
+def build_search_backend(cfg: config.Config):
+    """検索バックエンドを選ぶ。Tavily を優先し、無ければ OpenAI web_search。"""
+    if cfg.tavily_api_key:
+        return TavilyWebSearch(
+            cfg.tavily_api_key, max_results=cfg.tavily_max_results
+        )
+    if cfg.openai_api_key:
+        return OpenAiWebSearch(
+            cfg.openai_api_key,
+            cfg.openai_model,
+            search_context_size=cfg.openai_search_context_size,
+        )
+    return None
 
 
 def build_generator(cfg: config.Config):
-    """OpenAI を主、Anthropic を副に。どちらかが無ければ片方のみで動作。"""
-    primary = (
-        OpenAiReportGenerator(
+    """DeepSeek 多段パイプラインを主、Anthropic を副に配線する。
+
+    検索バックエンドは Tavily（既定）/ OpenAI web_search。DeepSeek には検索機能が
+    ないため検索は WebSearch ポートへ委譲する。DeepSeek 未設定時は従来の OpenAI
+    単段生成へ後方互換フォールバックする。
+    """
+    web_search = build_search_backend(cfg)
+
+    primary = None
+    if cfg.deepseek_api_key and web_search is not None:
+        primary = DeepSeekPipelineReportGenerator(
+            cfg.deepseek_api_key,
+            web_search,
+            model=cfg.deepseek_model,
+            base_url=cfg.deepseek_base_url,
+            max_search_queries=cfg.max_search_queries,
+        )
+    elif cfg.openai_api_key:
+        # DeepSeek 未設定（または検索バックエンド無し）時は従来方式で動かす
+        primary = OpenAiReportGenerator(
             cfg.openai_api_key,
             cfg.openai_model,
             web_search=cfg.openai_web_search,
             search_context_size=cfg.openai_search_context_size,
         )
-        if cfg.openai_api_key
-        else None
-    )
+
     secondary = (
         AnthropicReportGenerator(cfg.anthropic_api_key, cfg.anthropic_model)
         if cfg.anthropic_api_key
@@ -42,7 +75,8 @@ def build_generator(cfg: config.Config):
     if secondary:
         return secondary
     raise SystemExit(
-        "OPENAI_API_KEY または ANTHROPIC_API_KEY の少なくとも一方が必要です。"
+        "DEEPSEEK_API_KEY(+OPENAI_API_KEY) / OPENAI_API_KEY / "
+        "ANTHROPIC_API_KEY のいずれかが必要です。"
     )
 
 
