@@ -37,6 +37,19 @@ def _extract_text_and_sources(data: dict) -> tuple[str, list[tuple[str, str]]]:
     return text, sources
 
 
+def _merge_sources(
+    primary: list[tuple[str, str]], secondary: list[tuple[str, str]]
+) -> list[tuple[str, str]]:
+    """URL で重複排除しつつ primary→secondary の順で結合。"""
+    merged: list[tuple[str, str]] = []
+    seen: set[str] = set()
+    for label, url in [*primary, *secondary]:
+        if url and url not in seen:
+            seen.add(url)
+            merged.append((label, url))
+    return merged
+
+
 class OpenAiReportGenerator(ReportGenerator):
     name = "openai"
 
@@ -76,11 +89,16 @@ class OpenAiReportGenerator(ReportGenerator):
             data = _http.post_json(
                 _RESPONSES_ENDPOINT, payload, headers, timeout=240
             )
-            text, sources = _extract_text_and_sources(data)
+            text, ann_sources = _extract_text_and_sources(data)
             # Web 検索モデルは厳密 JSON が不安定なためプレーン解釈（JSON も内部で許容）
             title, paragraphs = _ai_prompt.parse_plain(text)
+            # 本文中のインライン引用を除去して出典として集約
+            paragraphs, inline_sources = _ai_prompt.strip_and_collect_links(
+                paragraphs
+            )
+            sources = _merge_sources(ann_sources, inline_sources)
             if sources:
-                cited = " / ".join(f"{t}（{u}）" for t, u in sources[:5])
+                cited = " / ".join(f"{t}（{u}）" for t, u in sources[:6])
                 paragraphs = paragraphs + [f"出典: {cited}"]
             return Report(
                 keyword=keyword,

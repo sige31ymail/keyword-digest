@@ -65,6 +65,36 @@ def _normalize_paragraph(text: str) -> str:
     return re.sub(r"\s+", " ", text.strip())
 
 
+# Web 検索モデルが本文に埋め込むインライン引用 `([ラベル](URL))` / `[ラベル](URL)`
+_MD_LINK = re.compile(r"\(?\[([^\]]+)\]\((https?://[^)\s]+)\)\)?")
+
+
+def strip_and_collect_links(
+    paragraphs: list[str],
+) -> tuple[list[str], list[tuple[str, str]]]:
+    """段落からインライン引用リンクを除去し、出典(label,url)一覧を集める。"""
+    sources: list[tuple[str, str]] = []
+    seen: set[str] = set()
+    cleaned: list[str] = []
+    for para in paragraphs:
+        def _repl(m: re.Match) -> str:
+            label, url = m.group(1).strip(), m.group(2).strip()
+            if url not in seen:
+                seen.add(url)
+                sources.append((label, url))
+            return ""
+
+        new_para = _MD_LINK.sub(_repl, para)
+        new_para = re.sub(r"\s+", " ", new_para)
+        # 句読点・閉じ括弧の前の余分な空白を詰める
+        new_para = re.sub(r"\s+([。、，．）)」』】])", r"\1", new_para).strip()
+        if new_para:
+            cleaned.append(new_para)
+    if not cleaned:  # 全段落がリンクのみだった場合の保険
+        cleaned = [p for p in paragraphs if p.strip()]
+    return cleaned, sources
+
+
 def parse_response(text: str) -> tuple[str, list[str]]:
     """JSON 文字列から (title, paragraphs) を取り出す。"""
     raw = text.strip()
