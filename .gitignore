@@ -1,0 +1,14 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+
+# ローカル実行用の秘密情報
+.env
+local.properties
+
+# 生成物（site/ は Pages デプロイ時に Actions が生成するため追跡しない）
+site/reports/
+site/feed.xml
+site/index.html

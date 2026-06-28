@@ -1,0 +1,2 @@
+# 標準ライブラリのみで実装しているため外部依存はありません。
+# （OpenAI/Anthropic 呼び出し・RSS生成・HTML生成はすべて urllib / json / xml で実装）

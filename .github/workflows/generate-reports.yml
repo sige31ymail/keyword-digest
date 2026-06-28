@@ -1,0 +1,56 @@
+name: Generate Reports
+
+on:
+  workflow_dispatch: {}
+  # Phase 4 で有効化: 毎日 JST 07:00 (UTC 22:00) に自動生成
+  # schedule:
+  #   - cron: "0 22 * * *"
+
+# 同時実行は 1 つに制限（フィード/Pages の競合を避ける）
+concurrency:
+  group: generate-reports
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+  issues: read
+  pages: write
+  id-token: write
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Configure Pages
+        id: pages
+        uses: actions/configure-pages@v5
+
+      - name: Generate reports
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          GITHUB_REPOSITORY: ${{ github.repository }}
+          SITE_BASE_URL: ${{ steps.pages.outputs.base_url }}
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          MAX_FEED_ITEMS: "20"
+        run: python -m src.main
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: site
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
