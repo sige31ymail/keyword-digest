@@ -21,7 +21,12 @@ from .infrastructure.static_site_publisher import StaticSitePublisher
 def build_generator(cfg: config.Config):
     """OpenAI を主、Anthropic を副に。どちらかが無ければ片方のみで動作。"""
     primary = (
-        OpenAiReportGenerator(cfg.openai_api_key, cfg.openai_model)
+        OpenAiReportGenerator(
+            cfg.openai_api_key,
+            cfg.openai_model,
+            web_search=cfg.openai_web_search,
+            search_context_size=cfg.openai_search_context_size,
+        )
         if cfg.openai_api_key
         else None
     )

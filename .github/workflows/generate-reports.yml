@@ -44,6 +44,11 @@ jobs:
           SITE_BASE_URL: ${{ steps.pages.outputs.base_url }}
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          # 案A: Responses API の web_search で最新情報を反映（出典付き）
+          # モデルが利用不可になったら現行の検索対応モデルに変更する
+          OPENAI_MODEL: "gpt-4o-mini"
+          OPENAI_WEB_SEARCH: "true"
+          OPENAI_SEARCH_CONTEXT_SIZE: "medium"
           MAX_FEED_ITEMS: "20"
           RETENTION_MAX_AGE_DAYS: "30"
           RETENTION_MAX_COUNT: "100"

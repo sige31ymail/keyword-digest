@@ -131,7 +131,7 @@ PocketDigest の軽量方針（重い依存を避ける）を踏襲し、**Pytho
 | 実装 | 技術 |
 | --- | --- |
 | GitHubIssueKeywordSource | REST `GET /repos/{owner}/{repo}/issues?state=open`（PR を除外） |
-| OpenAiReportGenerator | OpenAI Chat Completions（`gpt-4o-mini`）, `response_format=json_object` |
+| OpenAiReportGenerator | 既定は **Responses API（`/v1/responses`）の `web_search` ツール**で最新 Web 情報に基づき生成し、`url_citation` から出典を本文末尾に付与（案A）。`OPENAI_WEB_SEARCH=false` で旧来の Chat Completions（モデル知識のみ）に切替可 |
 | AnthropicReportGenerator | Anthropic Messages（`claude-haiku-4-5`） |
 | FallbackReportGenerator | 主失敗時に副へ切替（PocketDigest `FallbackAiEnrichmentClient` と同思想） |
 | StaticSitePublisher | 文字列テンプレで HTML、手組みで RSS 2.0。`<meta name="kd:*">` でメタ情報を埋め、再実行時に既存レポートを復元。`delete_reports` で保持ポリシー削除を実行 |
@@ -139,6 +139,8 @@ PocketDigest の軽量方針（重い依存を避ける）を踏襲し、**Pytho
 Secrets（Actions）: `OPENAI_API_KEY` / `ANTHROPIC_API_KEY` / `GITHUB_TOKEN`（自動）。
 環境変数: `MAX_FEED_ITEMS`(20) / `RETENTION_MAX_AGE_DAYS`(30) / `RETENTION_MAX_COUNT`(100)。
 ワークフロー権限は蓄積コミットのため `contents: write`。
+Web 検索関連: `OPENAI_WEB_SEARCH`(true) / `OPENAI_MODEL`(検索対応モデル) / `OPENAI_SEARCH_CONTEXT_SIZE`(medium)。
+Web 検索は $10/1k 呼び出し + 検索内容トークンの追加課金（レポート1本あたり概ね +約1.2¢）。Anthropic フォールバックは検索なし。
 
 ---
 

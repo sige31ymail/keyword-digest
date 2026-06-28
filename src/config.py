@@ -13,6 +13,8 @@ class Config:
     site_dir: str
     openai_api_key: str
     openai_model: str
+    openai_web_search: bool
+    openai_search_context_size: str
     anthropic_api_key: str
     anthropic_model: str
     max_feed_items: int
@@ -49,6 +51,11 @@ def load() -> Config:
         site_dir=os.environ.get("SITE_DIR", os.path.join(repo_root, "site")),
         openai_api_key=os.environ.get("OPENAI_API_KEY", "").strip(),
         openai_model=os.environ.get("OPENAI_MODEL", "gpt-4o-mini").strip(),
+        openai_web_search=os.environ.get("OPENAI_WEB_SEARCH", "true").strip().lower()
+        not in ("0", "false", "no", ""),
+        openai_search_context_size=os.environ.get(
+            "OPENAI_SEARCH_CONTEXT_SIZE", "medium"
+        ).strip(),
         anthropic_api_key=os.environ.get("ANTHROPIC_API_KEY", "").strip(),
         anthropic_model=os.environ.get(
             "ANTHROPIC_MODEL", "claude-haiku-4-5"
