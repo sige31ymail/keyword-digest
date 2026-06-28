@@ -2,11 +2,12 @@
 from __future__ import annotations
 
 from ..domain.keyword import Keyword
+from ..ports.issue_closer import IssueCloser
 from ..ports.keyword_source import KeywordSource
 from . import _http
 
 
-class GitHubIssueKeywordSource(KeywordSource):
+class GitHubIssueKeywordSource(KeywordSource, IssueCloser):
     def __init__(self, repository: str, token: str):
         self._repository = repository
         self._token = token
@@ -48,3 +49,11 @@ class GitHubIssueKeywordSource(KeywordSource):
                 break
             page += 1
         return keywords
+
+    def close(self, issue_number: int, comment: str | None = None) -> None:
+        base = f"https://api.github.com/repos/{self._repository}/issues/{issue_number}"
+        if comment:
+            _http.post_json(
+                f"{base}/comments", {"body": comment}, self._headers()
+            )
+        _http.patch_json(base, {"state": "closed"}, self._headers())

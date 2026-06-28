@@ -75,13 +75,14 @@ class StaticSitePublisher(SitePublisher):
             guid=self._report_link(slug),
             published_at=published,
             slug=slug,
+            keyword=report.keyword.title,
         )
 
     _META_RE = {
         key: re.compile(
             rf'<meta name="kd:{key}" content="([^"]*)"', re.IGNORECASE
         )
-        for key in ("title", "slug", "published")
+        for key in ("title", "slug", "published", "keyword")
     }
 
     def list_existing_items(self) -> list[FeedItem]:
@@ -118,6 +119,7 @@ class StaticSitePublisher(SitePublisher):
                     guid=link,
                     published_at=published,
                     slug=slug,
+                    keyword=meta.get("keyword", ""),
                 )
             )
         return items

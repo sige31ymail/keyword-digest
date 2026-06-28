@@ -14,7 +14,7 @@ concurrency:
 
 permissions:
   contents: write  # 生成レポートを site/ にコミットして蓄積するため
-  issues: read
+  issues: write  # 生成成功した Issue を自動クローズするため
   pages: write
   id-token: write
 
@@ -60,6 +60,10 @@ jobs:
           # 副: 生成フォールバック（検索なし単段）
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
           MAX_FEED_ITEMS: "20"
+          # 一度だけ生成して恒久保存: 記事は削除せず、成功した Issue は自動クローズ
+          RETENTION_ENABLED: "false"
+          AUTO_CLOSE_ISSUES: "true"
+          # 保持ポリシーを有効化する場合のみ参照される（RETENTION_ENABLED=true）
           RETENTION_MAX_AGE_DAYS: "30"
           RETENTION_MAX_COUNT: "100"
         run: python -m src.main

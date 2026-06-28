@@ -12,6 +12,7 @@ class FeedItem:
     guid: str
     published_at: datetime
     slug: str = ""  # レポートファイルの識別子（保持ポリシーでの削除に使用）
+    keyword: str = ""  # 由来キーワード（冪等な再生成スキップの判定に使用）
 
 
 @dataclass(frozen=True)

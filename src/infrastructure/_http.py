@@ -13,23 +13,43 @@ class HttpError(RuntimeError):
         self.body = body
 
 
+def _send_json(
+    url: str,
+    payload: dict,
+    headers: dict[str, str],
+    method: str,
+    timeout: int,
+) -> dict:
+    data = json.dumps(payload).encode("utf-8")
+    req = urllib.request.Request(url, data=data, method=method)
+    req.add_header("Content-Type", "application/json")
+    for key, value in headers.items():
+        req.add_header(key, value)
+    try:
+        with urllib.request.urlopen(req, timeout=timeout) as resp:
+            raw = resp.read().decode("utf-8")
+            return json.loads(raw) if raw else {}
+    except urllib.error.HTTPError as exc:  # 4xx/5xx
+        body = exc.read().decode("utf-8", errors="replace")
+        raise HttpError(exc.code, body) from exc
+
+
 def post_json(
     url: str,
     payload: dict,
     headers: dict[str, str],
     timeout: int = 120,
 ) -> dict:
-    data = json.dumps(payload).encode("utf-8")
-    req = urllib.request.Request(url, data=data, method="POST")
-    req.add_header("Content-Type", "application/json")
-    for key, value in headers.items():
-        req.add_header(key, value)
-    try:
-        with urllib.request.urlopen(req, timeout=timeout) as resp:
-            return json.loads(resp.read().decode("utf-8"))
-    except urllib.error.HTTPError as exc:  # 4xx/5xx
-        body = exc.read().decode("utf-8", errors="replace")
-        raise HttpError(exc.code, body) from exc
+    return _send_json(url, payload, headers, "POST", timeout)
+
+
+def patch_json(
+    url: str,
+    payload: dict,
+    headers: dict[str, str],
+    timeout: int = 60,
+) -> dict:
+    return _send_json(url, payload, headers, "PATCH", timeout)
 
 
 def get_json(url: str, headers: dict[str, str], timeout: int = 60):

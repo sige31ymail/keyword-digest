@@ -98,6 +98,9 @@ def main() -> int:
         max_feed_items=cfg.max_feed_items,
         retention_max_age_days=cfg.retention_max_age_days,
         retention_max_count=cfg.retention_max_count,
+        retention_enabled=cfg.retention_enabled,
+        auto_close=cfg.auto_close_issues,
+        issue_closer=keyword_source,
     )
     result = use_case.execute()
     # 1 件でも成功すれば正常終了（全滅時のみエラー終了）

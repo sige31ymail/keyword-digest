@@ -28,6 +28,8 @@ class Config:
     max_feed_items: int
     retention_max_age_days: int
     retention_max_count: int
+    retention_enabled: bool
+    auto_close_issues: bool
 
     @property
     def owner(self) -> str:
@@ -83,4 +85,13 @@ def load() -> Config:
             os.environ.get("RETENTION_MAX_AGE_DAYS", "30")
         ),
         retention_max_count=int(os.environ.get("RETENTION_MAX_COUNT", "100")),
+        # 既定は「一度だけ生成して恒久保存」モデル: 削除しない / 成功後にクローズ
+        retention_enabled=os.environ.get("RETENTION_ENABLED", "false")
+        .strip()
+        .lower()
+        in ("1", "true", "yes", "on"),
+        auto_close_issues=os.environ.get("AUTO_CLOSE_ISSUES", "true")
+        .strip()
+        .lower()
+        in ("1", "true", "yes", "on"),
     )
