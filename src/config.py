@@ -15,6 +15,8 @@ class Config:
     deepseek_model: str
     deepseek_base_url: str
     max_search_queries: int
+    article_min_chars: int
+    article_max_chars: int
     tavily_api_key: str
     tavily_max_results: int
     openai_api_key: str
@@ -60,9 +62,11 @@ def load() -> Config:
         deepseek_base_url=os.environ.get(
             "DEEPSEEK_BASE_URL", "https://api.deepseek.com"
         ).strip(),
-        max_search_queries=int(os.environ.get("MAX_SEARCH_QUERIES", "3")),
+        max_search_queries=int(os.environ.get("MAX_SEARCH_QUERIES", "5")),
+        article_min_chars=int(os.environ.get("ARTICLE_MIN_CHARS", "1800")),
+        article_max_chars=int(os.environ.get("ARTICLE_MAX_CHARS", "3000")),
         tavily_api_key=os.environ.get("TAVILY_API_KEY", "").strip(),
-        tavily_max_results=int(os.environ.get("TAVILY_MAX_RESULTS", "5")),
+        tavily_max_results=int(os.environ.get("TAVILY_MAX_RESULTS", "6")),
         openai_api_key=os.environ.get("OPENAI_API_KEY", "").strip(),
         openai_model=os.environ.get("OPENAI_MODEL", "gpt-4o-mini").strip(),
         openai_web_search=os.environ.get("OPENAI_WEB_SEARCH", "true").strip().lower()

@@ -58,8 +58,10 @@ class DeepSeekPipelineReportGenerator(ReportGenerator):
         web_search: WebSearch,
         model: str = "deepseek-v4-pro",
         base_url: str = _DEFAULT_BASE_URL,
-        max_search_queries: int = 3,
-        timeout: int = 180,
+        max_search_queries: int = 5,
+        article_min_chars: int = 1800,
+        article_max_chars: int = 3000,
+        timeout: int = 300,
     ):
         if not api_key:
             raise ValueError("DeepSeek API key is required.")
@@ -68,10 +70,12 @@ class DeepSeekPipelineReportGenerator(ReportGenerator):
         self._model = model
         self._endpoint = base_url.rstrip("/") + "/chat/completions"
         self._max_search_queries = max(1, max_search_queries)
+        self._article_min_chars = article_min_chars
+        self._article_max_chars = article_max_chars
         self._timeout = timeout
 
     # --- DeepSeek chat 呼び出し ------------------------------------------
-    def _chat(self, user_prompt: str, *, max_tokens: int = 4000) -> str:
+    def _chat(self, user_prompt: str, *, max_tokens: int = 8000) -> str:
         payload = {
             "model": self._model,
             "messages": [
@@ -132,7 +136,15 @@ class DeepSeekPipelineReportGenerator(ReportGenerator):
     def _stage_body(
         self, keyword: Keyword, outline_block: str, facts: list[str]
     ) -> tuple[str, list[str]]:
-        text = self._chat(P.build_body_prompt(keyword, outline_block, facts))
+        text = self._chat(
+            P.build_body_prompt(
+                keyword,
+                outline_block,
+                facts,
+                self._article_min_chars,
+                self._article_max_chars,
+            )
+        )
         return P.parse_title_paragraphs(text)
 
     def _stage_factcheck(

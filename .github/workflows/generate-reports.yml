@@ -45,10 +45,13 @@ jobs:
           # 主: DeepSeek 多段パイプライン（クエリ生成→検索→要約→構成→本文→検証）
           DEEPSEEK_API_KEY: ${{ secrets.DEEPSEEK_API_KEY }}
           DEEPSEEK_MODEL: "deepseek-v4-pro"
-          MAX_SEARCH_QUERIES: "3"
+          # 多角的に深掘りするため検索クエリ数と記事長を増やす（コスト増を許容）
+          MAX_SEARCH_QUERIES: "5"
+          ARTICLE_MIN_CHARS: "1800"
+          ARTICLE_MAX_CHARS: "3000"
           # 検索バックエンド（既定 Tavily）。DeepSeek には検索機能がないため別途必要
           TAVILY_API_KEY: ${{ secrets.TAVILY_API_KEY }}
-          TAVILY_MAX_RESULTS: "5"
+          TAVILY_MAX_RESULTS: "6"
           # 予備の検索バックエンド兼 後方互換の単段生成（Tavily 未設定時に使用）
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
           OPENAI_MODEL: "gpt-4o-mini"

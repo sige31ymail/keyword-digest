@@ -53,6 +53,8 @@ def build_generator(cfg: config.Config):
             model=cfg.deepseek_model,
             base_url=cfg.deepseek_base_url,
             max_search_queries=cfg.max_search_queries,
+            article_min_chars=cfg.article_min_chars,
+            article_max_chars=cfg.article_max_chars,
         )
     elif cfg.openai_api_key:
         # DeepSeek 未設定（または検索バックエンド無し）時は従来方式で動かす
