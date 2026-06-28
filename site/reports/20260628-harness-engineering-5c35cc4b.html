@@ -3,20 +3,22 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="kd:title" content="エージェントハーネス工学の潮流">
+<meta name="kd:title" content="AIエージェントを導くハーネス工学の台頭">
 <meta name="kd:slug" content="20260628-harness-engineering-5c35cc4b">
-<meta name="kd:published" content="2026-06-28T13:29:42.548724+00:00">
+<meta name="kd:published" content="2026-06-28T13:44:47.823527+00:00">
 <meta name="kd:keyword" content="Harness engineeringとは">
 <meta name="kd:generated_by" content="deepseek">
-<title>エージェントハーネス工学の潮流</title>
+<title>AIエージェントを導くハーネス工学の台頭</title>
 </head>
 <body>
 <article>
-<h1>エージェントハーネス工学の潮流</h1>
-<p>2025年末から2026年初頭にかけて、AIエージェント分野で「Harness Engineering」が急速に注目された。この概念は、自律型AIエージェントが長時間多数の意思決定を人間の監督なしで安定動作するための実行環境を設計する分野であり、プロンプトエンジニアリングやコンテキストエンジニアリングとは一線を画す。ハーネスの語源はソフトウェアテストのテストハーネスにあり、EleutherAIが2020年に公開した評価フレームワーク「lm-evaluation-harness」を経て、現在ではエージェントハーネスへと意味が拡張された。エージェントハーネスは、思考ループを担うランタイム、ツール・メモリ・指示群を包含するコンテキスト、サンドボックスや権限・監査からなるセーフティの3層で構成される。</p>
-<p>この動きを牽引した代表的な発表として、Anthropicは2025年11月に「効果的なハーネス」、2026年1月に「エージェント評価の謎を解く」を公開し、評価ハーネスとエージェントハーネスを明確に区別した。OpenAIは2026年2月の解説記事で、Codexにより人間が一行もコードを書かずに約100万行のソフトウェアを生成した事例を報告。LangChainも同時期の実験で、モデルを変更せずにハーネスを改善するだけで長時間タスクのベンチマーク順位をトップ30圏外からトップ5へ引き上げたことを示した。ハーネスエンジニアリングでは、新たなモデルが登場した際に「何を取り除けるか」を問い、検索やチャンク戦略をモデル性能に応じて動的に適合させることが重視される。</p>
-<p>出典: What Is Harness Engineering for AI Agents? - Milvus（https://milvus.io/blog/harness-engineering-ai-agents.md） / Harness Engineeringとは何か？プロンプトの次に来る「AIエージェントの環境設計」を実務目線で解説（https://zenn.dev/japan/articles/a7c6d33c0a24c0） / The Anatomy of an Agent Harness - LangChain（https://www.langchain.com/blog/the-anatomy-of-an-agent-harness） / ハーネスエンジニアリングとは一体何なのか。（https://newspicks.com/news/16607103/body） / Harness Engineering: What It Means for QA（https://testcollab.com/blog/harness-engineering）</p>
-<footer><p>キーワード「Harness engineeringとは」について deepseek が生成。2026-06-28 13:29 UTC</p></footer>
+<h1>AIエージェントを導くハーネス工学の台頭</h1>
+<p>Harness Engineering（ハーネス工学）は、AIエージェントが安定して自律動作するための実行環境を設計する新たな分野として急速に注目を集めている。2025年11月のAnthropicの発表、2026年2月のOpenAIによる解説、さらにLangChainの提唱などを契機に、従来のプロンプトエンジニアリングやコンテキストエンジニアリングとは一線を画す重要な概念として認知され始めた。単なる指示や文脈の調整ではなく、ツール提供、検証機構、制約設定、情報供給などを体系的に組み込むことで、エージェントの挙動を構造的に支える点が特徴である。</p>
+<p>この考え方は「馬具（ハーネス）」の比喩で説明されることが多く、AIの能力を制限するのではなく、適切な制約をかけることで本来の性能を最大限に引き出すとされる。馬がハーネスによって方向や速度を制御されつつも自由に走れるように、AIエージェントもハーネスという枠組みの中でこそ、創造性や信頼性を発揮できるという視点だ。推進派からは、エージェントの暴走や誤作動を防ぎながら実用性を高める現実的な基盤として評価されており、一方で慎重派は過度な制約が柔軟性を損なう可能性を指摘するが、全体として設計論の確立が急務と見なされている。</p>
+<p>エージェントハーネスは、大きく三つの層から構成される。第一に、思考のループを管理する「ランタイム層」。第二に、指示やツール定義、メモリなどを統合する「コンテキスト層」。第三に、権限管理や承認フローを通じて安全性を担保する「セーフティ層」である。この階層構造により、開発者はAIの行動を段階的に制御し、想定外の出力や操作を未然に防ぎながら、同時に必要な情報と権限を適切なタイミングで与えることが可能になる。</p>
+<p>具体的な実装例として、AnthropicのClaudeではCLAUDE.mdを出発点に、Claude Code HooksやEgocentric Compliance Checker（ECC）といったコミュニティツールを活用した段階的アプローチが有効とされている。まず基本的な行動ルールをファイルで定義し、フックによってコード変更時の違反検知や強制を行い、さらにECCで自律的なコンプライアンスチェックを実装する流れだ。こうした手法は、ハーネス工学の実践が特定のモデルに依存せず、ツールと設計パターンの組み合わせで実現できることを示しており、今後のマルチエージェントシステムや業務自動化の基盤として期待が高まっている。</p>
+<p>出典: Harness Engineeringとは何か？プロンプトの次に来る「AI ... - Zenn（https://zenn.dev/japan/articles/a7c6d33c0a24c0） / What Is Harness Engineering for AI Agents? - Milvus（https://milvus.io/blog/harness-engineering-ai-agents.md） / The Anatomy of an Agent Harness - LangChain（https://www.langchain.com/blog/the-anatomy-of-an-agent-harness） / Harness Engineering: What Separates Top Agentic ... - YouTube（https://www.youtube.com/watch?v=ulNsa0sD8N0） / ハーネスエンジニアリングとは一体何なのか。 - NewsPicks（https://newspicks.com/news/16607103/body） / ハーネスエンジニアリング入門 CLAUDE.mdの次に来るAI ... - Qiita（https://qiita.com/nogataka/items/d1b3fcf355c630cd7fc8）</p>
+<footer><p>キーワード「Harness engineeringとは」について deepseek が生成。2026-06-28 13:44 UTC</p></footer>
 </article>
 </body>
 </html>
