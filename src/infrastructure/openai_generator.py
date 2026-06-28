@@ -62,8 +62,8 @@ class OpenAiReportGenerator(ReportGenerator):
     def _generate_with_web_search(self, keyword: Keyword) -> Report:
         payload = {
             "model": self._model,
-            "instructions": _ai_prompt.SYSTEM_PROMPT,
-            "input": _ai_prompt.build_user_prompt(keyword),
+            "instructions": _ai_prompt.SYSTEM_PROMPT_PLAIN,
+            "input": _ai_prompt.build_user_prompt_plain(keyword),
             "tools": [
                 {
                     "type": "web_search",
@@ -77,7 +77,8 @@ class OpenAiReportGenerator(ReportGenerator):
                 _RESPONSES_ENDPOINT, payload, headers, timeout=240
             )
             text, sources = _extract_text_and_sources(data)
-            title, paragraphs = _ai_prompt.parse_response(text)
+            # Web 検索モデルは厳密 JSON が不安定なためプレーン解釈（JSON も内部で許容）
+            title, paragraphs = _ai_prompt.parse_plain(text)
             if sources:
                 cited = " / ".join(f"{t}（{u}）" for t, u in sources[:5])
                 paragraphs = paragraphs + [f"出典: {cited}"]
